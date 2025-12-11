@@ -42,6 +42,10 @@ const CONFIG = {
         { key: 'bone_dinosaur_loop', atlas: 'bone_dinosaur_atlas', prefix: 'bone_dinosaur_', start: 16, end: 19, repeat: -1 },
         { key: 'carnivore_dinosaur_full', atlas: 'carnivore_dinosaur_atlas', prefix: 'carnivore_dinosaur_', end: 15, repeat: 0 },
         { key: 'carnivore_dinosaur_loop', atlas: 'carnivore_dinosaur_atlas', prefix: 'carnivore_dinosaur_', start: 13, end: 15, repeat: -1 },
+        { key: 'three_head_dinosaur_full', atlas: 'three_head_dinosaur_atlas', prefix: 'three_head_dinosaur_', end: 18, repeat: 0 },
+        { key: 'three_head_dinosaur_loop', atlas: 'three_head_dinosaur_atlas', prefix: 'three_head_dinosaur_', start: 15, end: 18, repeat: -1 },
+        { key: 'three_body_dinosaur_full', atlas: 'three_body_dinosaur_atlas', prefix: 'three_body_dinosaur_', end: 18, repeat: 0 },
+        { key: 'three_body_dinosaur_loop', atlas: 'three_body_dinosaur_atlas', prefix: 'three_body_dinosaur_', start: 15, end: 18, repeat: -1 },
     ]
 };
 
@@ -52,9 +56,8 @@ const ALL_DINOSAURS = [
     { key: 'flower_dinosaur', name: 'Flower Dino', atlas: 'flower_dinosaur_atlas', frame: 'flower_dinosaur_10' },
     { key: 'space_dinosaur', name: 'Space Dino', atlas: 'space_dinosaur_atlas', frame: 'space_dinosaur_7' },
     { key: 'ghost_dinosaur', name: 'Ghost Dino', atlas: 'ghost_dinosaur_atlas', frame: 'ghost_dinosaur_8' },
-    // 為未來的結局預留位置
-    { key: 'ending_6', name: '???', atlas: '', frame: '' },
-    { key: 'ending_7', name: '???', atlas: '', frame: '' },
+    { key: 'three_head_dinosaur', name: 'Three-Head Dino', atlas: 'three_head_dinosaur_atlas', frame: 'three_head_dinosaur_15' },
+    { key: 'three_body_dinosaur', name: 'Three-Body Dino', atlas: 'three_body_dinosaur_atlas', frame: 'three_body_dinosaur_15' },
     { key: 'ending_8', name: '???', atlas: '', frame: '' },
     { key: 'ending_9', name: '???', atlas: '', frame: '' },
     { key: 'ending_10', name: '???', atlas: '', frame: '' },
@@ -410,6 +413,12 @@ class GameScene extends Phaser.Scene {
                 break;
             case 'game_fruit2':
             // 您可以在這裡添加新食物的處理邏輯
+            case 'game_tape':
+                this.evolveToThreeHeadDinosaur();
+                break;
+            case 'game_threads':
+                this.evolveToThreeBodyDinosaur();
+                break;
             case 'game_shovel':
                 // 您可以在這裡添加 'shovel' 工具的處理邏輯
                 break;
@@ -484,6 +493,33 @@ class GameScene extends Phaser.Scene {
         };
         this.eggSprite.on('animationupdate', onAnimUpdate);
     }
+
+    evolveToThreeHeadDinosaur() {
+        if (!this.eggSprite.active) return;
+        this.eggSprite.stop().setTexture('three_head_dinosaur_atlas', 'three_head_dinosaur_1').setScale(CONFIG.EGG_SCALE);
+
+        this.eggSprite.play('three_head_dinosaur_full');
+        this.eggSprite.once('animationcomplete-three_head_dinosaur_full', () => {
+            if (this.eggSprite.active) {
+                this.eggSprite.play('three_head_dinosaur_loop');
+                this.time.delayedCall(1500, () => this.triggerEndingSequence('Three-Head Dino', 'three_head_dinosaur'));
+            }
+        });
+    }
+
+    evolveToThreeBodyDinosaur() {
+        if (!this.eggSprite.active) return;
+        this.eggSprite.stop().setTexture('three_body_dinosaur_atlas', 'three_body_dinosaur_1').setScale(CONFIG.EGG_SCALE);
+
+        this.eggSprite.play('three_body_dinosaur_full');
+        this.eggSprite.once('animationcomplete-three_body_dinosaur_full', () => {
+            if (this.eggSprite.active) {
+                this.eggSprite.play('three_body_dinosaur_loop');
+                this.time.delayedCall(1500, () => this.triggerEndingSequence('Three-Body Dino', 'three_body_dinosaur'));
+            }
+        });
+    }
+
 
     evolveToGhost() {
         if (!this.eggSprite.active) return;
